@@ -355,6 +355,7 @@ namespace Game
 
                 Thread.Sleep(700);
                 Program.WL("    Möchtest du erneut spielen?");
+                Program.W("    ");
                 newGame = Console.ReadLine().Trim().ToLower();   // ".Trim()" removes spaces before and afer the input, ".ToLower()" puts the input into lowercase letters.
 
                 while (newGame != "ja" && newGame != "nein")
@@ -607,6 +608,7 @@ namespace MainGuiNamespace
                 Console.Clear();
                 Program.WL("\n    Möchtest du etwas Anderes spielen?");
                 Program.WL("    Ja / Nein", "DarkCyan");
+                Program.W("    ");
                 newGame = Console.ReadLine().Trim().ToLower();
                 while (newGame != "ja" && newGame != "nein")
                 {
