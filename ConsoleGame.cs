@@ -528,10 +528,20 @@ namespace MainGuiNamespace
             Program.W("    Antworte mit der Zahl oder dem Namen des gewünschten Spiels: ");
             //Program.UserInput();
 
+            int tempVar = 0;
+
             for (bool ValidGame = true; ValidGame == true;)
             {
 
                 string TempChosenGame = Console.ReadLine();
+                if(tempVar == 0)
+                {
+                    tempVar = 1;
+                }
+                else
+                {
+                    Program.ClearLines(2);
+                }
 
 
                 if (Program.IsAllDigits(TempChosenGame) == true)
