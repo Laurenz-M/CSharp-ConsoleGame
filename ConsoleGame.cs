@@ -72,10 +72,10 @@ namespace Game
                     while (newCard != "ja" && newCard != "nein")
                     {
                         Program.WL("\n    Ungültige Antwort! Bitte antworte mit <Ja> oder <Nein> !", "Red");
-                        Program.WL("    Möchtest du eine weitere Karte ziehen?");
-                        Program.W("    ");
+                        Program.W("    Möchtest du eine weitere Karte ziehen?  ");
+                        //Program.W("    ");
                         newCard = Console.ReadLine().Trim().ToLower();
-                        //Console.Clear();
+                        Program.ClearLines(3);
                     }
                     if (newCard == "ja")
                     {
@@ -106,9 +106,9 @@ namespace Game
                 while (newGame != "ja" && newGame != "nein")
                 {
                     Program.WL("\n    Ungültige Antwort! Bitte antworte mit <Ja> oder <Nein> !", "Red");
-                    Program.WL("    Möchtest du erneut spielen?");
+                    Program.W("    Möchtest du erneut spielen?  ");
                     newGame = Console.ReadLine().Trim().ToLower();
-                    Console.Clear();
+                    Program.ClearLines(3);
                 }
                 //Console.ReadKey();
                 //ResetArrays and Variables here
@@ -220,92 +220,11 @@ namespace Game
         }
     }
 
-    static class rolldice
-    {
-        public static void MainGame()
-        {
-            //int StreakRolldice = 0;
-            for (string newGame = "ja"; newGame == "ja";)
-            {
-
-                Program.WL("    Zwei Würfel werden auf einmal gewürfelt.\n    Wenn du zwei gleiche Zahlen würfelst, gewinnst du!");
-                Program.WL("    Drücke <Enter> um zu würfeln!\n ");
-
-                Random randomOne = new Random();
-
-                int diceOne = 0;
-                int diceTwo = 1;
-                int attempts = 0;
-
-                for (; diceOne != diceTwo; attempts++)
-                {
-                    Console.ReadKey();
-                    diceOne = randomOne.Next(1, 7);
-                    diceTwo = randomOne.Next(1, 7);
-
-                    /*ProgramWL("    Du hast eine ", "", "", "Write");
-                    ProgramWL("" + diceOne, "Red", "", "Write");
-                    ProgramWL(" und eine ", "", "", "Write");
-                    ProgramWL("" + diceTwo, "Red", "", "Write");
-                    ProgramWL(" gewürfelt!", "", "", "Write");
-                    Program.W(diceOne + "§Red", "Blue");*/
-                    Program.ColorParts("    Du hast eine ", diceOne + "§Red", " und eine ", diceTwo + "§Red", " gewürfelt!");
-
-                }
-                if (attempts != 1)
-                {
-                    /*ProgramWL("\n    Du hast zwei ", "", "", "Write");
-                    ProgramWL(diceOne + "en", "DarkCyan", "", "Write");
-                    ProgramWL(" gewürfelt!", "", "", "Write");
-                    ProgramWL(" Du hast ", "", "", "Write");
-                    ProgramWL("" + attempts, "DarkCyan", "", "Write");
-                    ProgramWL(" Würfe gebraucht!\n\n", "", "", "Write");
-                    ProgramWL("    Deine Chance lag bei ungefähr ", "", "", "Write");
-                    ProgramWL("16,667%", "DarkCyan", "", "Write");
-                    ProgramWL("!\n", "", "", "Write");*/
-                    Program.ColorParts("    Du hast zwei ", diceOne + "en§DarkCyan", " gewürfelt! ", "Du hast ", attempts + "§DarkCyan", " Würfe gebraucht!\n");
-                    Program.ColorParts("    Deine Chance lag bei ungefähr ", "16,667%§DarkCyan", "!\n");
-                }
-                else
-                {
-                    /*ProgramWL("\n    Du hast zwei ", "", "", "Write");
-                    ProgramWL("" + diceOne, "DarkCyan", "", "Write");
-                    ProgramWL(" gewürfelt! Du hast ", "", "", "Write");
-                    ProgramWL("einen", "DarkCyan", "", "Write");
-                    ProgramWL(" Wurf gebraucht!\n", "", "", "Write");*/
-                    Program.ColorParts("    Du hast zwei ", diceOne + "en§DarkCyan", " gewürfelt! ", "Du hast ", "einen§DarkCyan", " Wurf gebraucht!\n");
-                    Program.ColorParts("    Deine Chance lag bei ungefähr ", "16,667%§DarkCyan", "!\n");
-                }
-
-
-                Thread.Sleep(700);
-                Program.WL("    Möchtest du erneut spielen?");
-                newGame = Console.ReadLine().Trim().ToLower();   // ".Trim()" removes spaces before and afer the input, ".ToLower()" puts the input into lowercase letters.
-
-                while (newGame != "ja" && newGame != "nein")
-                {
-                    Program.WL("\n    Ungültige Antwort! Bitte antworte mit <Ja> oder <Nein> !", "Red");
-                    Program.WL("    Möchtest du erneut spielen?");
-                    newGame = Console.ReadLine().Trim().ToLower();
-                    Console.Clear();
-                }
-                Console.Clear();
-            }
-        }
-    }
-
-    public static class RandomExtensions
-    {
-        public static double NextDouble(this Random random, double minValue, double maxValue)
-        {
-            return random.NextDouble() * (maxValue - minValue) + minValue;
-        }
-    }
-
     static class guessnumbers
     {
         public static void MainGame()
         {
+            Console.Clear();
             for (string newGame = "ja"; newGame == "ja";)
             {
                 Program.WL("\n    Das Spiel funktioniert so: Du bestimmst den Abstand der Zahlen und rätst dann eine Zahl dazwischen.");
@@ -313,7 +232,7 @@ namespace Game
                 Program.W("    Niedrigste Zahl: ");
                 string firstNumberString = Console.ReadLine();
                 float firstNumberFloat = Program.WhileNotNumber(firstNumberString);
-                
+
                 Program.W("    Höchste Zahl: ");
                 string secondNumberString = Console.ReadLine();
                 float secondNumberFloat = Program.WhileNotNumber(secondNumberString);
@@ -361,15 +280,103 @@ namespace Game
                 while (newGame != "ja" && newGame != "nein")
                 {
                     Program.WL("\n    Ungültige Antwort! Bitte antworte mit <Ja> oder <Nein> !", "Red");
-                    Program.WL("    Möchtest du erneut spielen?");
+                    Program.W("    Möchtest du erneut spielen?  ");
                     newGame = Console.ReadLine().Trim().ToLower();
-                    Console.Clear();
+                    Program.ClearLines(3);
                 }
                 Console.Clear();
 
             }
         }
     }
+
+    static class rolldice
+    {
+        public static void MainGame()
+        {
+            //int StreakRolldice = 0;
+            for (string newGame = "ja"; newGame == "ja";)
+            {
+                Console.Clear();
+                Program.WL("\n    Zwei Würfel werden auf einmal gewürfelt.\n    Wenn du zwei gleiche Zahlen würfelst, gewinnst du!");
+                Program.WL("    Drücke <Enter> um zu würfeln!\n ");
+
+                Random randomOne = new Random();
+
+                int diceOne = 0;
+                int diceTwo = 1;
+                int attempts = 0;
+
+                for (; diceOne != diceTwo; attempts++)
+                {
+                    while (Console.ReadKey().Key != ConsoleKey.Enter)
+                    {
+                        //Program.ClearLines(0);
+                    }
+                    Program.ClearLines(0);
+                    //Console.ReadKey();
+                    diceOne = randomOne.Next(1, 7);
+                    diceTwo = randomOne.Next(1, 7);
+
+                    /*ProgramWL("    Du hast eine ", "", "", "Write");
+                    ProgramWL("" + diceOne, "Red", "", "Write");
+                    ProgramWL(" und eine ", "", "", "Write");
+                    ProgramWL("" + diceTwo, "Red", "", "Write");
+                    ProgramWL(" gewürfelt!", "", "", "Write");
+                    Program.W(diceOne + "§Red", "Blue");*/
+                    Program.ColorParts("    Du hast eine ", diceOne + "§Red", " und eine ", diceTwo + "§Red", " gewürfelt!");
+
+                }
+                if (attempts != 1)
+                {
+                    /*ProgramWL("\n    Du hast zwei ", "", "", "Write");
+                    ProgramWL(diceOne + "en", "DarkCyan", "", "Write");
+                    ProgramWL(" gewürfelt!", "", "", "Write");
+                    ProgramWL(" Du hast ", "", "", "Write");
+                    ProgramWL("" + attempts, "DarkCyan", "", "Write");
+                    ProgramWL(" Würfe gebraucht!\n\n", "", "", "Write");
+                    ProgramWL("    Deine Chance lag bei ungefähr ", "", "", "Write");
+                    ProgramWL("16,667%", "DarkCyan", "", "Write");
+                    ProgramWL("!\n", "", "", "Write");*/
+                    Program.ColorParts("    Du hast zwei ", diceOne + "en§DarkCyan", " gewürfelt! ", "Du hast ", attempts + "§DarkCyan", " Würfe gebraucht!\n");
+                    Program.ColorParts("    Deine Chance lag bei ungefähr ", "16,667%§DarkCyan", "!\n");
+                }
+                else
+                {
+                    /*ProgramWL("\n    Du hast zwei ", "", "", "Write");
+                    ProgramWL("" + diceOne, "DarkCyan", "", "Write");
+                    ProgramWL(" gewürfelt! Du hast ", "", "", "Write");
+                    ProgramWL("einen", "DarkCyan", "", "Write");
+                    ProgramWL(" Wurf gebraucht!\n", "", "", "Write");*/
+                    Program.ColorParts("    Du hast zwei ", diceOne + "en§DarkCyan", " gewürfelt! ", "Du hast ", "einen§DarkCyan", " Wurf gebraucht!\n");
+                    Program.ColorParts("    Deine Chance lag bei ungefähr ", "16,667%§DarkCyan", "!\n");
+                }
+
+
+                Thread.Sleep(700);
+                Program.WL("    Möchtest du erneut spielen?");
+                newGame = Console.ReadLine().Trim().ToLower();   // ".Trim()" removes spaces before and afer the input, ".ToLower()" puts the input into lowercase letters.
+
+                while (newGame != "ja" && newGame != "nein")
+                {
+                    Program.WL("\n    Ungültige Antwort! Bitte antworte mit <Ja> oder <Nein> !", "Red");
+                    Program.W("    Möchtest du erneut spielen?    ");
+                    newGame = Console.ReadLine().Trim().ToLower();
+                    Program.ClearLines(3);
+                }
+                Console.Clear();
+            }
+        }
+    }
+
+    public static class RandomExtensions
+    {
+        public static double NextDouble(this Random random, double minValue, double maxValue)
+        {
+            return random.NextDouble() * (maxValue - minValue) + minValue;
+        }
+    }
+
 }
 
 namespace MainGuiNamespace
@@ -513,6 +520,7 @@ namespace MainGuiNamespace
     {
         static int ChooseGame(string[] GameNames)
         {
+            Program.WL("\n    Es gibt " + (GameNames.Length-1) + " verschiedene Spiele für dich zur Auswahl.\n    Was möchtest du spielen?");
             for (int loopVar = 1; loopVar < GameNames.Length; loopVar++)
             {
                 Program.WL("    " + loopVar + ". " + GameNames[loopVar], "Yellow");
@@ -524,6 +532,7 @@ namespace MainGuiNamespace
             {
 
                 string TempChosenGame = Console.ReadLine();
+
 
                 if (Program.IsAllDigits(TempChosenGame) == true)
                 {
@@ -579,19 +588,20 @@ namespace MainGuiNamespace
             string[] GameNames = { "", "Blackjack", "Zahlen raten", "Pasch würfeln" };
             Action[] MainGames = { Game.blackjack.MainGame, Game.guessnumbers.MainGame, Game.rolldice.MainGame };
             Thread.Sleep(100);
-            Program.WL("\n    Willkommen" + "!\n    Es gibt " + MainGames.Length + " verschiedene Spiele für dich zur Auswahl.\n    Was möchtest du spielen?");
+            Program.W("\n    Willkommen!");
             Thread.Sleep(100);
 
             for (string newGame = "ja"; newGame == "ja";)
             {
                 MainGames[MainUi.ChooseGame(GameNames) - 1]();
-                Program.WL("    Möchtest du erneut spielen?");
+                Console.Clear();
+                Program.WL("\n    Möchtest du etwas Anderes spielen?");
                 Program.WL("    Ja / Nein", "DarkCyan");
                 newGame = Console.ReadLine().Trim().ToLower();
                 while (newGame != "ja" && newGame != "nein")
                 {
                     Program.WL("\n    Ungültige Antwort! Bitte antworte mit <Ja> oder <Nein> !", "Red");
-                    Program.W("    Möchtest du erneut spielen?    ");
+                    Program.W("    Möchtest du etwas Anderes spielen?    ");
                     newGame = Console.ReadLine().Trim().ToLower();
                     Program.ClearLines(3);
                 }
