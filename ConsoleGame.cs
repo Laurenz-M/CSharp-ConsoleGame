@@ -491,6 +491,22 @@ namespace MainGuiNamespace
             return Convert.ToSingle(Input);
         }
 
+        public static void ClearLines(int NumberOfLines)
+        {
+            int currentLineCursorStart = Console.CursorTop;
+            if (Console.CursorTop >= NumberOfLines)
+            {
+                for (int LineNumber = 0; LineNumber <= NumberOfLines; LineNumber++)
+                {
+                    int currentLineCursor = Console.CursorTop;
+                    Console.SetCursorPosition(0, Console.CursorTop - LineNumber);
+                    Console.Write(new string(' ', Console.WindowWidth));
+                    Console.SetCursorPosition(0, currentLineCursor);
+                }
+                Console.SetCursorPosition(0, currentLineCursorStart - NumberOfLines);
+            }
+            else throw new ApplicationException("Can't clear more lines than available!");
+        }
     }
 
     class MainUi
@@ -569,15 +585,15 @@ namespace MainGuiNamespace
             for (string newGame = "ja"; newGame == "ja";)
             {
                 MainGames[MainUi.ChooseGame(GameNames) - 1]();
-                Program.WL("Möchtest du erneut spielen?");
-                Program.WL("Ja / Nein", "DarkCyan");
+                Program.WL("    Möchtest du erneut spielen?");
+                Program.WL("    Ja / Nein", "DarkCyan");
                 newGame = Console.ReadLine().Trim().ToLower();
                 while (newGame != "ja" && newGame != "nein")
                 {
                     Program.WL("\n    Ungültige Antwort! Bitte antworte mit <Ja> oder <Nein> !", "Red");
-                    Program.WL("    Möchtest du erneut spielen?");
+                    Program.W("    Möchtest du erneut spielen?    ");
                     newGame = Console.ReadLine().Trim().ToLower();
-                    Console.Clear();
+                    Program.ClearLines(3);
                 }
                 Console.Clear();
             }
