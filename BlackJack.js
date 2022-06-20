@@ -29,13 +29,32 @@ cardNames.forEach(cardName => {
 
 })
 
+//const blackjackVariants = []
+const splitRules = { 
+
+    standard: {
+        maxAllowedSplits: 2,
+        canResplitAces: false,
+        onlySplitIdenticalValueTenCards: false,
+        multipleHitsOnSplitAce: false,
+        canHitAndDoubleOnSplits: true
+    },
+    variations: {   //contains an array for each option that inc,udes all valid variations
+        maxAllowedSplits: [2,3,-1], //"-1" stands for unlimited splits
+        canResplitAces: [false, true],
+        onlySplitIdenticalValueTenCards: [false, true],
+        multipleHitsOnSplitAce: [false, true],
+        canHitAndDoubleOnSplits: [false, true],
+    }
+}
+
 //start of game
 let dealerHand = []
 let playerHand = []
 
 let currentDeck = baseDeck
 currentDeck = takeCard(randomDeckCard(currentDeck), currentDeck)
-calculateHandValue([{ cardValue: 'ace', cardName: 'ace', suitName: 'diamonds' },{ cardValue: 'ace', cardName: 'ace', suitName: 'diamonds' },{ cardValue: 4, cardName: 'four', suitName: 'diamonds' }])
+console.log(calculateHandValue([randomDeckCard(currentDeck),randomDeckCard(currentDeck),randomDeckCard(currentDeck)]))
 
 
 //functions
@@ -111,46 +130,46 @@ function calculateHandValue(hand){
         hand.forEach(card => {
             sumAmount += card.cardValue
         })
-        console.log(sumAmount)
         return sumAmount
     }
     else{
-        let aceArray = []
-        hand.forEach(card => {
-            if(card.cardName === 'ace') aceArray.push(card)
-        })
-        restArray = hand.filter(card => card.cardName !== 'ace')
-        console.log('aceArray', aceArray)
-        console.log('restArray', restArray)
-
-        let handWithoutAce = 0
-        restArray.forEach(card => {
-            handWithoutAce += card.cardValue
-        })
-        console.log(handWithoutAce)
-
-        let addAceToValue = handWithoutAce
-        aceArray.forEach(card => {
-
-            if(addAceToValue + 11 > 21){
-                //1
-                addAceToValue += 1
-                card.cardValue = 1
-            }
-            else if(addAceToValue + 11 <= 21){
-                //11
-                addAceToValue += 11
-                card.cardValue = 11
-            }
-            else console.log('else')
-        })
-        console.log('aceToValue', addAceToValue)
-        console.log('aceArray', aceArray)
-        console.log('restArray', restArray)
+        return calculateAce(hand)
     }
 
 }
 
-function calculateAce(){
+function calculateAce(hand){
 
+    let aceArray = []
+    hand.forEach(card => {
+        if(card.cardName === 'ace') aceArray.push(card)
+    })
+    restArray = hand.filter(card => card.cardName !== 'ace')
+
+    let handWithoutAce = 0
+    restArray.forEach(card => {
+        handWithoutAce += card.cardValue
+    })
+
+    let addAceToValue = handWithoutAce
+    aceArray.forEach(card => {
+
+        if(addAceToValue + 11 > 21){
+            //1
+            addAceToValue += 1
+            card.cardValue = 1
+        }
+        else if(addAceToValue + 11 <= 21){
+            //11
+            addAceToValue += 11
+            card.cardValue = 11
+        }
+        else console.log('else')
+    })
+    return addAceToValue
+}
+
+function isSplitable(hand) {
+    if(hand.length != 2) return false //cant split 1 or 3 cards
+    if(hand[0].cardValue != hand[1].cardValue) return false //cant split non-equal cards
 }
