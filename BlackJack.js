@@ -47,18 +47,20 @@ const splitRules = {
         canHitAndDoubleOnSplits: [false, true],
     }
 }
+const numberOfDecks = 1
+let currentStack = createStackFromDeck(baseDeck,numberOfDecks)
 
 //start of game
 let dealerHand = []
 let playerHand = []
 
-let currentDeck = baseDeck
-currentDeck = takeCard(randomDeckCard(currentDeck), currentDeck)
-console.log(calculateHandValue([randomDeckCard(currentDeck),randomDeckCard(currentDeck),randomDeckCard(currentDeck)]))
+currentStack = takeCard(randomDeckCard(currentStack), currentStack)
+console.log(calculateHandValue([randomDeckCard(currentStack),randomDeckCard(currentStack),randomDeckCard(currentStack)]))
 
 
 //functions
 function randomDeckCard(deck){
+
     const cardAmount = Object.keys(deck).length - 1
 
     let pickedCardIndex = randomInRange(0,cardAmount)
@@ -169,7 +171,35 @@ function calculateAce(hand){
     return addAceToValue
 }
 
-function isSplitable(hand) {
+function isSplitable(hand, splitRules) {
     if(hand.length != 2) return false //cant split 1 or 3 cards
     if(hand[0].cardValue != hand[1].cardValue) return false //cant split non-equal cards
+
+    return true
+}
+
+function doubleDown(hand){
+
+}
+
+function hit(hand){
+
+}
+
+function stand(hand){
+
+}
+
+function createStackFromDeck(baseDeck,numberOfDecks){
+
+    returnStack = baseDeck
+    Object.keys(returnStack).forEach(cardName => {
+        returnStack[cardName].totalAmount *= numberOfDecks
+        //console.log(cardName)
+        Object.keys(returnStack[cardName].suits).forEach(suitName => {
+            returnStack[cardName].suits[suitName] *= numberOfDecks
+        })
+    })
+    return returnStack
+    //console.log(returnStack)
 }
