@@ -49,13 +49,38 @@ const splitRules = {
 }
 const numberOfDecks = 1
 let currentStack = createStackFromDeck(baseDeck,numberOfDecks)
+let playerObject = {
+    playerName:'RainbowPepe',
+    initialBalance: '100',
+    playerBet: '10',
+    currentBalance: '100',
+    hands: {},
+}
 
 //start of game
 let dealerHand = []
 let playerHand = []
+let playerBet = 5
+
+//setup player hand
+playerHand.push(hit(currentStack))
+playerHand.push(hit(currentStack))
+playerObject.hands['0'] = playerHand //sets given cards as first hand of playerObject
+//console.log(playerObject)
+if(isBlackjack(playerHand)) console.log('blackjack!')
 
 currentStack = takeCard(randomDeckCard(currentStack), currentStack)
-console.log(calculateHandValue([randomDeckCard(currentStack),randomDeckCard(currentStack),randomDeckCard(currentStack)]))
+//console.log(calculateHandValue([randomDeckCard(currentStack),randomDeckCard(currentStack)]))
+console.log('====================')
+let obj = {
+    hands: {
+        '0': []
+    }
+}
+console.log("afterCreate: ",obj)
+obj = createHandInPlayerObject(obj)
+//console.log(createHandInPlayerObject(obj))
+console.log("afterFunc",obj)
 
 
 //functions
@@ -101,7 +126,7 @@ function randomDeckCard(deck){
     tempReturnObjectUntilFailureFound.cardValue = pickedCardObject.cardValue
     //delete pickedCardObject['suits']
     //delete pickedCardObject['totalAmount']
-    console.log(tempReturnObjectUntilFailureFound)
+    //console.log(tempReturnObjectUntilFailureFound)
     return tempReturnObjectUntilFailureFound
 
 }
@@ -182,8 +207,11 @@ function doubleDown(hand){
 
 }
 
-function hit(hand){
+function hit(stack){
 
+    let randomCard = randomDeckCard(stack)
+    takeCard(randomCard, stack)
+    return randomCard
 }
 
 function stand(hand){
@@ -202,4 +230,38 @@ function createStackFromDeck(baseDeck,numberOfDecks){
     })
     return returnStack
     //console.log(returnStack)
+}
+
+function isBlackjack(hand){
+    if(hand.length != 2) return false
+    if(calculateHandValue(hand) != 21) return false
+    return true
+}
+
+function splitHand(hand){
+    if(!isSplitable(hand, splitRules)) return
+    return  [hand[0], hand[1]]
+}
+
+function createHandInPlayerObject(playerObject){
+
+    if(!Object.keys(playerObject).includes('hands')){
+        console.log('Object doesnt have "hands"-property!')
+        return
+    }
+    const arrayOfHandNames = Object.keys(playerObject.hands)
+
+    if(arrayOfHandNames.length === 0){
+        playerObject.hands['0'] = []
+        return playerObject
+    }
+    console.log("getObj:",typeof parseInt(arrayOfHandNames[arrayOfHandNames.length-1]))
+    if(isNaN(parseInt(arrayOfHandNames[arrayOfHandNames.length-1]))){
+        console.log("Error, couldnt recognize index of object: ",arrayOfHandNames[arrayOfHandNames.length-1])
+        return
+    }
+    let newObjectIndex = parseInt(arrayOfHandNames[arrayOfHandNames.length-1]) + 1
+    newObjectIndex = String(newObjectIndex)
+    playerObject.hands[newObjectIndex] = []
+    return playerObject
 }
