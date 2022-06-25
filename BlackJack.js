@@ -47,6 +47,248 @@ const splitRules = {
         canHitAndDoubleOnSplits: [false, true],
     }
 }
+
+
+let sideBets = {
+
+    available: {
+
+        perfectPairMixed: {
+
+            includesSubOptions: true,
+            entered: false,
+            betAmount: 0,
+            dealerInvolved: false,
+
+            mixed: {          
+
+                fulfilled: (hand) => {
+                    if(hand[0].cardValue == hand[1].cardValue){
+                        return true
+                    }
+                    return false
+                },
+                payout: '5:1',
+            },
+            colored:{                
+
+                fulfilled: (hand) => { 
+                    if(hand[0].cardValue == hand[1].cardValue && (hand[0].suitName === 'hearts' || hand[1].suitName === 'diamonds') && (hand[0].suitName === 'hearts' || hand[1].suitName === 'diamonds')){
+                        return true
+                    }
+                    return false
+                },
+                payout: '12:1'
+            },
+            perfect:{                
+
+                fulfilled: (hand) => {
+                    if(hand[0].cardValue == hand[1].cardValue && hasSameSuit(hand,2)){
+                        return true
+                    }
+                    return false
+                },
+                payout: '30:1'
+            }
+        },
+        twentyOnePlusThree: {
+
+            includesSubOptions: true,
+            entered: false,
+            betAmount: 0,
+
+            flush: {                
+
+                fulfilled: (hand) => {
+                    if(hasSameSuit(hand,3)) return true
+                    return false
+                },
+                payout: '5:1'
+            },
+            straight: {                
+
+                fulfilled: (hand) => {
+                    if(isStraight(hand,3)) return true
+                    return false
+                },
+                payout: '10:1'
+            },
+            threeOfAKind: {                
+
+                fulfilled: (hand) => {
+                    if(hasSameValue(hand,3)) return true
+                    return false
+                },
+                payout: '30:1'
+            },
+            straightFlush: {                
+
+                fulfilled: (hand) => {
+                    if(isStraight(hand,3) && hasSameSuit(hand,3)) return true
+                    return false
+                },
+                payout: '40:1'
+            },
+            suitedTrips: {                
+
+                fulfilled: (hand) => {
+                    if(hasSameValue(hand,3) && hasSameSuit(hand,3)) return true
+                },
+                payout: '100:1'
+            }
+
+        },
+        royalMatch: {
+
+            includesSubOptions: true,
+            entered: false,
+            betAmount: 0,
+
+            easy: {                
+
+                fulfilled: (hand) => {
+                    if(hasSameSuit(hand,2)) return true
+                    return false
+                },
+                payout: '5:2'
+            },
+            easyBlackjack: {                
+
+                fulfilled: (hand) => {
+                    if(hasSameSuit(hand,2) && isBlackjack(hand)) return true
+                    return false
+                },
+                payout: '5:1'
+            },
+            royal: {                
+
+                fulfilled: (hand) => {
+                    if(hasSameSuit(hand,2) && ((hand[0].cardName === 'queen' && hand[1].cardName === 'king') || (hand[0].cardName === 'king' && hand[1].cardName === 'queen'))) return true
+                    return false
+                },
+                payout: '25:1'
+            },
+        },
+        overUnderThirteen: {   
+
+            includesSubOptions: false,
+            entered: false,
+            betAmount: 0,
+
+            fulfilled: (hand) => {
+                let handValueArray = []
+
+                for (let i = 0; i < 2; i++){ //first two cards
+                    if(hand[i].cardValue === 'ace') handValueArray.push(1)  //ace counted as one
+                    else handValueArray.push(hand[i].cardValue)
+                }
+                let totalValue = 0
+                handValueArray.forEach(value => {
+                    totalValue += value
+                })
+                if(totalValue > 13 || totalValue < 13) return true
+                return false
+            },
+            payout: '1:1'
+        },
+        superSevens: {
+
+            includesSubOptions: true,
+            entered: false,
+            betAmount: 0,
+
+            single: {                
+
+                fulfilled: (hand) => {
+                    if(hand[0].cardName === 'seven') return true
+                    return false
+                },
+                payout: '3:1'
+            },
+            pair: {                
+
+                fulfilled: (hand) => {
+                    if(hasSameValue(hand,2) && hand[0].cardName === 'seven') return true
+                    return false
+                },
+                payout: '50:1'
+            },
+            suitedPair: {                
+
+                fulfilled: (hand) => {
+                    if(hasSameSuit(hand,2) && hasSameValue(hand,2) && hand[0].cardName === 'seven') return true
+                    return false
+                },
+                payout: '100:1'
+            },
+            set: {                
+
+                fulfilled: (hand) => {
+                    if(hasSameValue(hand,3) && hand[0].cardName === 'seven') return true
+                    return false
+                },
+                payout: '500:1'
+            },
+            suitedSet: {                
+
+                fulfilled: (hand) => {
+                    if(hasSameSuit(hand,3) && hasSameValue(hand,3) && hand[0].cardName === 'seven') return true
+                    return false
+                },
+                payout: '5000:1'
+            }
+        },
+        luckyLadies: {
+
+            includesSubOptions: true,
+            entered: false,
+            betAmount: 0,
+
+            any: {                
+
+                fulfilled: (hand) => {
+                    if(hand[0].cardValue + hand[1].cardValue == 20) return true
+                    return false
+                },
+                payout: '4:1'
+            },   
+            suited: {                
+
+                fulfilled: (hand) => {
+                    if(hasSameSuit(hand,2) && hand[0].cardValue + hand[1].cardValue == 20) return true
+                    return false
+                },
+                payout: '10:1'
+            },         
+            matching: {                
+
+                fulfilled: (hand) => {
+                    if(hand[0].cardName == hand[1].cardName && hasSameSuit(hand,2) && hand[0].cardValue == 10 && hand[1].cardValue == 10) return true
+                    return false
+                },
+                payout: '25:1'
+            },
+            queensOfHeart: {                
+
+                fulfilled: (hand) => {
+                    if(hasSameSuit(hand,2) && hand[0].cardName === 'queen' && hand[1].cardName === 'queen') return true
+                    return false
+                },
+                payout: '200:1'
+            },
+            queensOfHeartDealerBlackjack: {                
+
+                fulfilled: (hand) => {
+                    if(hasSameSuit(hand,2) && hand[0].cardName === 'queen' && hand[1].cardName === 'queen' && isBlackjack(dealerHand)) return true
+                    return false
+                },
+                payout: '1000:1'
+            }
+        }
+        
+    }
+}
+
 const numberOfDecks = 1
 let currentStack = createStackFromDeck(baseDeck,numberOfDecks)
 let playerObject = {
@@ -55,33 +297,61 @@ let playerObject = {
     playerBet: '10',
     currentBalance: '100',
     hands: {},
+    hasInsurance: false
 }
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+let keepPlaying = true
+
+while (keepPlaying) {
+
+//place bets and sidebets
+currentStack = createStackFromDeck(baseDeck,numberOfDecks) //restocks deck
+
+playerObject.playerBet = 10
+playerObject.hasInsurance = false //reset insurance-status before new round
+playerObject.hands = {}
 
 //start of game
+console.log(includesObject(sideBets))
+return
 let dealerHand = []
-let playerHand = []
-let playerBet = 5
 
 //setup player hand
-playerHand.push(hit(currentStack))
-playerHand.push(hit(currentStack))
-playerObject.hands['0'] = playerHand //sets given cards as first hand of playerObject
-//console.log(playerObject)
-if(isBlackjack(playerHand)) console.log('blackjack!')
+playerObject = createHandInPlayerObject(playerObject)
+playerObject.hands['0'].push(hit(currentStack))
+playerObject.hands['0'].push(hit(currentStack))
 
-currentStack = takeCard(randomDeckCard(currentStack), currentStack)
-//console.log(calculateHandValue([randomDeckCard(currentStack),randomDeckCard(currentStack)]))
-console.log('====================')
-let obj = {
-    hands: {
-        '0': []
+//console.log("deckafterhit: ", currentStack)
+if(isBlackjack(playerObject.hands['0'])) console.log('blackjack!')
+else console.log('The value of your hand is: ' ,calculateHandValue(playerObject.hands['0']))
+
+dealerHand.push(hit(currentStack))
+dealerHand.push(hit(currentStack))
+
+console.log(dealerHand[0]) //shows first card of dealer
+if(insuranceAvailable(dealerHand)){
+    console.log("Dealer has an ace. Do you want to buy insurance?")
+    if("<Player buys insurance>"){
+        playerObject = setInsurance(playerObject)
     }
 }
-console.log("afterCreate: ",obj)
-obj = createHandInPlayerObject(obj)
-//console.log(createHandInPlayerObject(obj))
-console.log("afterFunc",obj)
 
+Object.keys(playerObject.hands).forEach(handIndex => {
+    let hand = playerObject.hands[handIndex]
+    if(!canDraw(hand)){ 
+        console.log('You cannot draw with this hand! Hand-value is ' + calculateHandValue(hand))
+        return
+    }
+    //let interactableEmbed = ""
+    //if(isSplitable(hand, splitRules)){ interactableEmbed.add(splitOptionButton) } //pseudo-code 
+})
+
+keepGoing = false
+console.log('====================')
+//console.log('<ALL EARNINGS/GAMESTATS HERE>')
+//console.log('Play again?')
+}   // end of playing-loop
 
 //functions
 function randomDeckCard(deck){
@@ -264,4 +534,108 @@ function createHandInPlayerObject(playerObject){
     newObjectIndex = String(newObjectIndex)
     playerObject.hands[newObjectIndex] = []
     return playerObject
+}
+
+function setInsurance(playerObject){
+    if(!hasNeccessaryKeys(playerObject)) throw new Error("Player-object doesnt have neccessary keys!")
+    playerObject.hasInsurance = true
+    playerObject.playerBet = playerObject.playerBet * 1.5
+    return playerObject
+}
+
+function hasNeccessaryKeys(playerObject){
+    const requiredKeys = ['currentBalance','initialBalance','hands','playerName','playerBet','hasInsurance']
+    const presentKeys = Object.keys(playerObject)
+    requiredKeys.forEach(key => {
+        if(!presentKeys.includes(key)) return false
+    })
+    return true
+}
+
+function surrender(playerObject){
+
+}
+
+
+function isBust(hand){
+    if(calculateHandValue(hand) <= 21) return false
+    return true
+}
+
+function insuranceAvailable(dealerHand){
+    if(dealerHand[0].cardName === 'ace') return true //if first card of dealer is ace
+    return false
+}
+
+function canDraw(hand){
+    if(isBust(hand)) return false
+    if(isBlackjack(hand)) return false
+    if(calculateHandValue(hand) >= 21) return false
+    //if(!isSplitable(hand, splitRules)) return false
+    return true
+}
+
+function isStraight(hand,firstXCards){
+    let cardValueArray = []
+    for(let i = 0; i < firstXCards; i++) {
+        cardValueArray.push(hand[i].cardValue)
+    }
+    /*hand.forEach(card => {
+        cardValueArray.push(card.cardValue)
+    })*/
+    cardValueArray.sort()
+    for(let i = 1; i < firstXCards; i++) {
+        console.log(cardValueArray[i-1], cardValueArray[i])
+        if(cardValueArray[i-1] + 1 != cardValueArray[i]) return false
+    }
+    return true
+}
+
+function hasSameSuit(hand,firstXCards){
+    
+    for(let i = 1; i < firstXCards; i++) {
+        if(hand[i-1].suitName != hand[i].suitName) return false
+
+    }
+    return true
+}
+
+function hasSameValue(hand,firstXCards){
+    for(let i = 1; i < firstXCards; i++) {
+        if(hand[i-1].cardValue != hand[i].cardValue) return false
+    }
+    return true
+}
+
+function getFulfilled(sideBets){
+
+    let allBetsNames = []
+    let sideBetsKeys = Object.keys(sideBets)
+
+    sideBetsKeys.forEach(sideBet => {
+
+        Object.keys(sideBets[sideBet]).forEach(sideBetObject => {
+
+        })
+    })
+}
+
+function includesObject(data){
+    if(!Object.keys(data)) return false
+    let isObjectCandidates = []
+    if(!Object.keys(data).includes('available')) return false
+
+    Object.keys(data.available).forEach(key => {
+        //console.log(typeof data.available[key])
+        if(Object.keys(data.available[key]).includes('includesSubOptions')) {
+            if(data.available[key].includesSubOptions === false) isObjectCandidates.push(data.available[key])
+        }
+        else{
+            Object.keys(data.available[key]).forEach(subOption => {
+                isObjectCandidates.push(data.available[key][subOption])
+            })
+        }
+
+    })
+    return isObjectCandidates
 }
