@@ -313,8 +313,6 @@ playerObject.hasInsurance = false //reset insurance-status before new round
 playerObject.hands = {}
 
 //start of game
-console.log(includesObject(sideBets))
-return
 let dealerHand = []
 
 //setup player hand
@@ -325,6 +323,9 @@ playerObject.hands['0'].push(hit(currentStack))
 //console.log("deckafterhit: ", currentStack)
 if(isBlackjack(playerObject.hands['0'])) console.log('blackjack!')
 else console.log('The value of your hand is: ' ,calculateHandValue(playerObject.hands['0']))
+
+console.log(getFulfilledBets(createSideBetList(sideBets), playerObject.hands['0']))
+
 
 dealerHand.push(hit(currentStack))
 dealerHand.push(hit(currentStack))
@@ -607,20 +608,59 @@ function hasSameValue(hand,firstXCards){
     return true
 }
 
-function getFulfilled(sideBets){
+function calculateSideBetEarnings(fulfilledBets){
 
-    let allBetsNames = []
-    let sideBetsKeys = Object.keys(sideBets)
+    let wonBetObject = {}
+    let payoutRatio = bet.payout
+    payoutRatio = payoutRatio.spilt(':')
+    const finalPayout = bet.betAmount * (payoutRatio[0] / payoutRatio[1])
 
-    sideBetsKeys.forEach(sideBet => {
+    wonBetObject['betName'] = bet.betName
+    wonBetObject['originalBetAmount'] = bet.betAmount
+    wonBetObject['payout'] = bet.payout
+    wonBetObject['finalPayout'] = finalPayout
 
-        Object.keys(sideBets[sideBet]).forEach(sideBetObject => {
 
-        })
-    })
 }
 
-function includesObject(data){
+function filterEqualCategoryBets(fulfilledBets){
+
+    let dublicateCategories = []
+    let categoryNamesObject = {}
+    fulfilledBets.forEach(bet => {
+        if(!Object.keys(categoryNamesObject).includes(bet.betName)){
+            categoryNamesObject[bet.betName] = []
+        }
+        categoryNamesObject[bet.betName].push(bet.betName)
+    })
+
+    Object.keys(categoryNamesObject).forEach(categoryName => {
+        if(Object.keys(categoryName).length > 1) dublicateCategories.push(categoryName)
+    })
+
+    dublicateCategories.forEach(category => {
+        categoryNamesObject[category]
+    })
+
+}
+
+function getFulfilledBets(sideBets, hand){
+
+    let fulfilledBets = []
+    //let sideBetsKeys = Object.keys(sideBets)
+    sideBets.forEach(sideBet => {
+        if(Object.keys(sideBet).includes('fulfilled')){
+            console.log(hand)
+            if(sideBet.fulfilled(hand) === true){
+                delete sideBet['entered']
+                fulfilledBets.push(sideBet)
+            }
+        }
+    })
+    return fulfilledBets
+}
+
+function createSideBetList(data){
     if(!Object.keys(data)) return false
     let isObjectCandidates = []
     if(!Object.keys(data).includes('available')) return false
@@ -628,12 +668,30 @@ function includesObject(data){
     Object.keys(data.available).forEach(key => {
         //console.log(typeof data.available[key])
         if(Object.keys(data.available[key]).includes('includesSubOptions')) {
-            if(data.available[key].includesSubOptions === false) isObjectCandidates.push(data.available[key])
+            if(data.available[key].includesSubOptions === false){
+
+                let appendPropObject = data.available[key]
+                delete appendPropObject['includesSubOptions']
+                appendPropObject['betName'] = key
+                isObjectCandidates.push(appendPropObject)
+            }
+
         }
-        else{
-            Object.keys(data.available[key]).forEach(subOption => {
-                isObjectCandidates.push(data.available[key][subOption])
-            })
+        if(Object.keys(data.available[key]).includes('includesSubOptions')){
+
+            if(data.available[key].includesSubOptions === true){
+                //console.log(Object.keys(data.available[key]))
+                Object.keys(data.available[key]).forEach(subOption => {
+                    //console.log(subOption)
+                    let appendPropObject = {}
+                    appendPropObject['betName'] = key
+                    appendPropObject['entered'] = data.available[key].entered
+                    appendPropObject['betAmount'] = data.available[key].betAmount
+                    appendPropObject['fulfilled'] = data.available[key][subOption].fulfilled
+                    appendPropObject['payout'] = data.available[key][subOption].payout
+                    if(typeof data.available[key][subOption] === 'object') isObjectCandidates.push(appendPropObject)
+                })
+            }      
         }
 
     })
