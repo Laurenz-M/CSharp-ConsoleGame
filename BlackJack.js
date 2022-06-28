@@ -473,8 +473,8 @@ let sideBets = {
         luckyLadies: {
 
             includesSubOptions: true,
-            entered: false,
-            betAmount: 0,
+            entered: true,
+            betAmount: 25,
 
             any: {                
 
@@ -510,9 +510,9 @@ let sideBets = {
             },
             queensOfHeartDealerBlackjack: {                
 
-                fulfilled: (hand) => {
-                    if(hasSameSuit(hand,2) && hand[0].cardName === 'queen' && hand[1].cardName === 'queen' && isBlackjack(dealerHand)) return true
-                    return false
+                fulfilled: (hand,dealerHand) => {
+                    console.log('dealer hand:',dealerHand)
+                    return true
                 },
                 payout: '1000:1'
             }
@@ -556,11 +556,14 @@ playerObject.hands['0'].push(hit(currentStack))
 if(isBlackjack(playerObject.hands['0'])) console.log('blackjack!')
 else console.log('The value of your hand is: ' ,calculateHandValue(playerObject.hands['0']))
 
-console.log(calculateSideBetEarnings(filterEqualCategoryBets(getFulfilledBets(createSideBetList(sideBets), playerObject.hands['0']))))
-return
+
 
 dealerHand.push(hit(currentStack))
 dealerHand.push(hit(currentStack))
+for(let i = 0; i < 10; i++){
+    console.log(generalSideBetCalculation(sideBets, playerObject.hands['0'],dealerHand))
+}
+return
 
 //console.log(dealerHand[0]) //shows first card of dealer
 if(insuranceAvailable(dealerHand)){
@@ -846,20 +849,25 @@ function hasSameValue(hand,firstXCards){
     return true
 }
 
+function insufficientCardsInHand(hand,expectedCardsAmount){
+    if(Object.keys(hand).length != expectedCardsAmount) return true
+    return false
+}
+
+//===========Sidebet functions================
 function calculateSideBetEarnings(fulfilledBets){
 
     let wonBetObject = {
         wonBetNames: [],
         totalPayout: 0
     }
-    console.log(fulfilledBets)
+    //console.log(fulfilledBets)
     fulfilledBets.forEach(bet => {
-        let payoutRatio = bet.payout
-        payoutRatio = payoutRatio.spilt(':')
-        const finalPayout = bet.betAmount * (payoutRatio[0] / payoutRatio[1])
+        let payoutRatio = getNetPayoutFromRatio(bet.payout)
+        const finalPayout = bet.betAmount * payoutRatio
 
         wonBetObject.wonBetNames.push(bet.betName)
-        totalPayout += finalPayout
+        wonBetObject.totalPayout += finalPayout
     })
     return wonBetObject
 
@@ -885,13 +893,12 @@ function filterEqualCategoryBets(fulfilledBets){
     //console.log(categoryNamesObject)
 
     dublicateCategories.forEach(category => {
-        let finalCategoryElement = ''
+        let finalCategoryElement = {payout: '1:1'}
         categoryNamesObject[category].forEach(betObject => {
             //console.log(categoryNamesObject[category])
-            let tempArray = betObject.payout.split(':')
-            let payoutRatio = parseInt(tempArray[0]) / parseInt(tempArray[1])
-            if(payoutRatio > finalCategoryElement) finalCategoryElement = betObject
-            console.log(finalCategoryElement)
+            let payoutRatio = getNetPayoutFromRatio(betObject.payout)
+            if(payoutRatio > getNetPayoutFromRatio(finalCategoryElement.payout)) finalCategoryElement = betObject
+            //console.log(finalCategoryElement)
         })
         filteredObjects.push(finalCategoryElement)
     })
@@ -900,11 +907,13 @@ function filterEqualCategoryBets(fulfilledBets){
 
 }
 
-function getNetPayoutFromRatio(){
+function getNetPayoutFromRatio(payoutRatio) {
 
+    let payoutArray = payoutRatio.split(':')
+    return (parseInt(payoutArray[0]) / parseInt(payoutArray[1]))
 }
 
-function getFulfilledBets(sideBets, hand){
+function getFulfilledBets(sideBets, hand, dealerHand){
 
     let fulfilledBets = []
     //let sideBetsKeys = Object.keys(sideBets)
@@ -912,7 +921,7 @@ function getFulfilledBets(sideBets, hand){
         if(Object.keys(sideBet).includes('fulfilled')){
             //console.log(hand)^
             if(sideBet.entered === true){
-                if(sideBet.fulfilled(hand) === true){
+                if(sideBet.fulfilled(hand,dealerHand) === true){
                     delete sideBet['entered']
                     sideBet.fulfilled = true
                     fulfilledBets.push(sideBet)
@@ -961,7 +970,11 @@ function createSideBetList(data){
     return isObjectCandidates
 }
 
-function insufficientCardsInHand(hand,expectedCardsAmount){
-    if(Object.keys(hand).length != expectedCardsAmount) return true
-    return false
+function generalSideBetCalculation(sideBets, playerHand, dealerHand){
+
+    let formattedSideBetList = createSideBetList(sideBets)
+    let fulfilledBets = getFulfilledBets(formattedSideBetList,playerHand, dealerHand)
+    let filteredFulfilledList = filterEqualCategoryBets(fulfilledBets)
+    let totalPayout = calculateSideBetEarnings(filteredFulfilledList)
+    return [filteredFulfilledList, totalPayout]
 }
